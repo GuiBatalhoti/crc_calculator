@@ -22,9 +22,9 @@ class Client:
         return self.sock.recvfrom(1024)
     
 
-    def send(self, message, dest_addr):
+    def send(self, message):
         #send message to the addr
-        self.sock.sendto(message, dest_addr)
+        self.sock.send(message)
 
 
 def main():
