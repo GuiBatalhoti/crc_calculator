@@ -4,14 +4,14 @@ from crc import CRCCalc
 
 
 class Server:
-    def __init__(self, host, port) -> None:
+    def __init__(self, host_addr, port) -> None:
         #socket ip host and port
-        self.host = host
+        self.host_addr = host_addr
         self.port = port
         #initializing socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #biding socket to parameters
-        self.sock.bind((self.host, self.port))
+        self.sock.bind((self.host_addr, self.port))
 
     
     def close(self):
