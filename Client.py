@@ -1,5 +1,5 @@
 import socket
-from crc_calc import CRCCalc
+from CRCCalc import CRCCalc
 
 
 def main():

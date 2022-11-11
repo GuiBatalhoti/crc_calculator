@@ -1,6 +1,6 @@
 #importing socket and the crc calculator
 import socket
-from crc_calc import CRCCalc   
+from CRCCalc import CRCCalc   
 
 def main():
     #creating the TCP server

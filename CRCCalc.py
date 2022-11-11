@@ -13,10 +13,15 @@ class CRCCalc:
 
 
     def mod2div(self):
-        generator_len = len(self.generator)
+        divisor_len = len(self.divisor)
+
+        n_bits = self.data
+
+        while divisor_len < len(self.data):
+            pass
 
 
 
 
     def is_valid(self) -> bool:
-        pass
+        return 0 == self.mod2div()
