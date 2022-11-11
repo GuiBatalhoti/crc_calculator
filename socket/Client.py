@@ -1,27 +1,23 @@
 import socket
-# from crc_calc import CRCCalc
+from crc_calc import CRCCalc
 
 
 def main():
-
-    client = Client('localhost', 8000)
+    #the message to be sent in bytes
+    message = 'hey'.encode("hex")
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     while True:
+        client.connect('localhost', 8000)
+        print("Client connected...")
         #user message
-        message = input("Enter message: ")
+        print(f"The message to be sent is {message.decode('ascii')}.")
 
         #calculate crc
-        # crc = CRCCalc(message)
+        crc = CRCCalc(message)
 
         #sending message
         client.send(message)
-
-        #sent messagem
-        print(f"Sent message: {message}")
-        
-        #message recieved
-        message_recv = client.recieve()
-        print(f"Recieved message: {message_recv}")
 
         #code to see if user qant to exit program
         choice = input("Exit program? [Y]es or [N]no: ")
