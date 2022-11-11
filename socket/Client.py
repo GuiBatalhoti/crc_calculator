@@ -1,30 +1,5 @@
 import socket
-from crc import CRCCalc
-
-class Client:
-    def __init__(self, host_addr, port) -> None:
-        #socket ip host and port
-        self.host_addr = host_addr
-        self.port = port
-        #initializing socket
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #biding socket to parameters
-        self.sock.bind((self.host_addr, self.port))
-
-    
-    def close(self):
-        #close the socket
-        self.sock.close()
-
-    
-    def recieve(self):
-        #recieve message
-        return self.sock.recvfrom(1024)
-    
-
-    def send(self, message):
-        #send message to the addr
-        self.sock.send(message)
+# from crc_calc import CRCCalc
 
 
 def main():
@@ -36,13 +11,13 @@ def main():
         message = input("Enter message: ")
 
         #calculate crc
-        crc = CRCCalc(message)
+        # crc = CRCCalc(message)
 
         #sending message
-        client.send(crc)
+        client.send(message)
 
         #sent messagem
-        print(f"Sent message: {crc}")
+        print(f"Sent message: {message}")
         
         #message recieved
         message_recv = client.recieve()
@@ -54,4 +29,8 @@ def main():
             print("Exiting program...")
             client.close
             break
+
+
+if __name__ == '__main__':
+    main()
     
