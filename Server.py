@@ -1,6 +1,10 @@
 #importing socket and the crc calculator
 import socket
-from CRCCalc import CRCCalc   
+from CRCCalc import is_valid_crc  
+
+
+generator = 0x81
+
 
 def main():
     #creating the TCP server
@@ -17,23 +21,22 @@ def main():
             conection, client = server.accept()
             
             #recieving message
-            message_rcv_with_checksum = server.recv()
+            message_rcv_with_checksum = conection.recv(4)
             #spliting the message and checksum
             message_rcv = message_rcv_with_checksum[0:3]
             checksum = message_rcv_with_checksum[3:4]
 
             #pinting the recived messages
-            print(f"Message recieved:",message_rcv.decode("ascii"),"}")
-            print(f"Checksum recieved:", int(checksum, 16))
+            print(f"Message recieved:", message_rcv)
+            print(f"Checksum recieved:", checksum)
 
-            crc = CRCCalc(message_rcv)
-
-            if crc.is_valid():
+            #checking message
+            if is_valid_crc(message_rcv_with_checksum):
                 print("The message is correct!!!! :)")
             else:
                 print("The message is incorrect... :(")
   
-    except:
+    except KeyboardInterrupt:
         print("Server closed...")
         server.close()
         exit(1)

@@ -1,23 +1,26 @@
 import socket
-from CRCCalc import CRCCalc
+from CRCCalc import mod2div
+
+
+generator = 0x81
 
 
 def main():
-    #the message to be sent in bytes
-    message = 'hey'.encode("hex")
+    #the message is 'hey' to be sent in bytes
+    message = 0x686579
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     while True:
-        client.connect('localhost', 8000)
+        client.connect(('localhost', 8000))
         print("Client connected...")
         #user message
-        print(f"The message to be sent is {message.decode('ascii')}.")
+        print(f"The message to be sent is {message}.")
 
-        #calculate crc
-        crc = CRCCalc(message)
+        message_with_zeros = message << 8
+        dividend = mod2div(message_with_zeros, generator)
+        bits_message = format(message, '016b') + format(dividend, '016b')
 
-        #sending message
-        client.send(message)
+        client.send(int.to_bytes(int(bits_message, base=2), length=4, byteorder='big'))
 
         #code to see if user qant to exit program
         choice = input("Exit program? [Y]es or [N]no: ")

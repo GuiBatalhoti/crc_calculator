@@ -1,27 +1,39 @@
+generator = 0x81
 
 
-class CRCCalc:
-    def __init__(self, data, divisor) -> None:
-        #data to be checked
-        self.data = data
-        #divisor
-        self.divisor = divisor
-        #the polynomial binary 
-        self.generator = '100010111'
+def mod2div(divisor, dividend) -> int:
+    #taking in binary and slicing the '0b'
+    dividend_bits = bin(dividend)[0:2]
+    divisor_bits = bin(divisor)[0:2]
 
-        self.crc = None
+    #length of the binarys
+    len_dividend = len(dividend_bits)
+    len_divisor = len(divisor_bits)
 
+    #the first dividend slice
+    dividend_slice = dividend_bits[0:len_divisor]
 
-    def mod2div(self):
-        divisor_len = len(self.divisor)
+    while len_divisor < len_dividend:
+        #verifing if is nedded to do the 'XOR'
+        if dividend_slice[0] == '1':
+            #take the next bit from the binary array and make the 'XOR' as integers
+            dividend_slice = format(divisor ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b') + dividend_bits[len_divisor]
+        
+        else:
+            #make the 'XOR' wiht zeros and take the next bits
+            dividend_slice = format(int('0'*len_divisor, base=2) ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b') + dividend_bits[len_divisor]
 
-        n_bits = self.data
+        len_divisor += 1
 
-        while divisor_len < len(self.data):
-            pass
+    #treating the last bits, to don't take the next bist, witch don't exist
+    if dividend_slice[0] == '1':
+        dividend_slice = format(divisor ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b')
+    else:
+        dividend_slice = format(int('0'*len_divisor, base=2) ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b')
 
+    return int(dividend_slice, base=2)
 
-
-
-    def is_valid(self) -> bool:
-        return 0 == self.mod2div()
+def is_valid_crc(message_rcv_with_checksum) -> bool:
+    mod = mod2div(int.from_bytes(message_rcv_with_checksum, byteorder='big'), generator)
+    print("Division result", mod)
+    return mod == 0
