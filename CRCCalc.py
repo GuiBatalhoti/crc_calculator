@@ -1,39 +1,63 @@
-generator = 0x81
+generator = '100000111'
 
 
-def mod2div(divisor, dividend) -> int:
-    #taking in binary and slicing the '0b'
-    dividend_bits = bin(dividend)[0:2]
-    divisor_bits = bin(divisor)[0:2]
+def encodeMessage(message, generator) -> str:
+    #funtion to encode the data to be sent
+    messade_with_zeros = message + '0'*(len(generator)-1)
 
+    division_result = mod2div(messade_with_zeros, generator)
+    return message + division_result
+
+
+def decodeMessage(message: bytes, generator) -> str:
+    #funtion to eecode the data received
+    messade_with_zeros = message.decode() + '0'*(len(generator)-1)
+
+    division_result = mod2div(messade_with_zeros, generator)
+    return division_result
+
+
+def mod2div(dividend, divisor) -> int:
     #length of the binarys
-    len_dividend = len(dividend_bits)
-    len_divisor = len(divisor_bits)
+    len_dividend = len(dividend)
+    len_divisor = len(divisor)
 
     #the first dividend slice
-    dividend_slice = dividend_bits[0:len_divisor]
+    dividend_slice = dividend[0:len_divisor]
 
     while len_divisor < len_dividend:
         #verifing if is nedded to do the 'XOR'
-        if dividend_slice[0] == '1':
-            #take the next bit from the binary array and make the 'XOR' as integers
-            dividend_slice = format(divisor ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b') + dividend_bits[len_divisor]
-        
-        else:
+        if dividend_slice[0] == '1': #leftmost bir is 1
+            #XOR the slice and dividend
+            #and take the next bit
+            dividend_slice = xor(divisor, dividend_slice) + dividend[len_divisor]            
+        else: #leftmost bir is 0
             #make the 'XOR' wiht zeros and take the next bits
-            dividend_slice = format(int('0'*len_divisor, base=2) ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b') + dividend_bits[len_divisor]
+            dividend_slice = xor('0'*len_divisor, dividend_slice) + dividend[len_divisor]
 
         len_divisor += 1
 
     #treating the last bits, to don't take the next bist, witch don't exist
     if dividend_slice[0] == '1':
-        dividend_slice = format(divisor ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b')
+        dividend_slice = xor(divisor, dividend_slice)
     else:
-        dividend_slice = format(int('0'*len_divisor, base=2) ^ int(dividend_slice, base=2), f'0{len_divisor - 1}b')
+        dividend_slice = xor('0'*len_divisor, dividend_slice)
 
-    return int(dividend_slice, base=2)
 
-def is_valid_crc(message_rcv_with_checksum) -> bool:
-    mod = mod2div(int.from_bytes(message_rcv_with_checksum, byteorder='big'), generator)
-    print("Division result", mod)
-    return mod == 0
+    return dividend_slice
+
+
+def xor(a, b):
+ 
+    # initialize result
+    result = []
+ 
+    # Traverse all bits, if bits are
+    # same, then XOR is 0, else 1
+    for i in range(1, len(b)):
+        if a[i] == b[i]:
+            result.append('0')
+        else:
+            result.append('1')
+ 
+    return ''.join(result)
